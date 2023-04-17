@@ -70,7 +70,7 @@ def change_network(Timeoftheworld):
                                                 agent_invader[0].speed_u, agent_invader[0].speed_v)
 
         # RBF网络得到近似值 Step1
-        z_1_set[i].append(np.norm(allhunters[i].z_1))
+        z_1_set[i].append(np.linalg.norm(allhunters[i].z_1))
 
         all_critic_1[i].forward(allhunters[i].z_1)
         all_actor_1[i].forward(allhunters[i].z_1)
@@ -84,7 +84,7 @@ def change_network(Timeoftheworld):
         allhunters[i].calculate_sub_error()
 
         # RBF网络得到近似值 Step2
-        z_2_set[i].append(np.norm(allhunters[i].z_2))
+        z_2_set[i].append(np.linalg.norm(allhunters[i].z_2))
 
         all_critic_2[i].forward(allhunters[i].z_2)
         all_actor_2[i].forward(allhunters[i].z_2)
