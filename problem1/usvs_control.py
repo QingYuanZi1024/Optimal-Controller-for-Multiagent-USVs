@@ -6,9 +6,13 @@ from math import atan,sin,cos,pi
 
 NumberofHunters = 3
 
+center_numbers = 72
+
 Timeoftheworld = 0
 
 SimulationLimits = 1000000
+
+
 
 allhunters = [None, None, None]
 
@@ -35,10 +39,10 @@ def create_world():
         z_1_set[i] = []
         z_2_set[i] = []
 
-        all_critic_1[i] = adp_drl_nn.Critic1_NN(72, 1)
-        all_actor_1[i] = adp_drl_nn.Actor1_NN(72, 1)
-        all_critic_2[i] = adp_drl_nn.Critic2_NN(72, 2)
-        all_actor_2[i] = adp_drl_nn.Actor2_NN(72, 2)
+        all_critic_1[i] = adp_drl_nn.Critic1_NN(center_numbers)
+        all_actor_1[i] = adp_drl_nn.Actor1_NN(center_numbers)
+        all_critic_2[i] = adp_drl_nn.Critic2_NN(center_numbers)
+        all_actor_2[i] = adp_drl_nn.Actor2_NN(center_numbers)
 
 def change_state(Timeoftheworld):
 
@@ -66,7 +70,7 @@ def change_network(Timeoftheworld):
                                                 agent_invader[0].speed_u, agent_invader[0].speed_v)
 
         # RBF网络得到近似值 Step1
-        z_1_set[i].append(np.norm(allhunters[i].z_1))
+        z_1_set[i].append(np.linalg.norm(allhunters[i].z_1))
 
         all_critic_1[i].forward(allhunters[i].z_1)
         all_actor_1[i].forward(allhunters[i].z_1)
@@ -80,7 +84,7 @@ def change_network(Timeoftheworld):
         allhunters[i].calculate_sub_error()
 
         # RBF网络得到近似值 Step2
-        z_2_set[i].append(np.norm(allhunters[i].z_2))
+        z_2_set[i].append(np.linalg.norm(allhunters[i].z_2))
 
         all_critic_2[i].forward(allhunters[i].z_2)
         all_actor_2[i].forward(allhunters[i].z_2)
