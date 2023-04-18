@@ -48,24 +48,28 @@ class RBFN(object):
         # print(self.feature_nums)
         # self.gaussian_kernel_width, self.hiddencenters, self.linearweights = self.init()
         self.hiddenoutputs = self.guass_change(self.gaussian_kernel_width, inputs, self.hiddencenters)
-        # print(self.hiddenoutputs.shape)
+        # print(self.hiddenoutputs)
         self.hiddenoutputs_expand = self.add_intercept(self.hiddenoutputs)
-        # print(self.linearweights.shape)
-        # print(self.hiddenoutputs_expand.shape)
+        # print(self.linearweights)
+        # print(self.hiddenoutputs_expand)
         self.finaloutputs = np.dot(self.hiddenoutputs_expand, self.linearweights)
-        # print(self.finaloutputs.shape)
+        # print(self.finaloutputs)
 
     def guass_function(self, gaussian_kernel_width, inputs, hiddencenters_i):
-        # print(inputs.shape)
+        # print(inputs)
         # print(hiddencenters_i)
         # print(gaussian_kernel_width.shape)
+        # print(np.linalg.norm((inputs-hiddencenters_i)))
+        # print(np.exp(-np.linalg.norm((inputs-hiddencenters_i), axis=1)**2/(2*gaussian_kernel_width**2)))
         return np.exp(-np.linalg.norm((inputs-hiddencenters_i), axis=1)**2/(2*gaussian_kernel_width**2))
 
     def guass_change(self, gaussian_kernel_width, inputs, hiddencenters):
         hiddenresults = np.zeros((self.sample_nums, len(hiddencenters)))
         # print(hiddenresults.shape)
         for i in range(len(hiddencenters)):
+            # print(self.guass_function(gaussian_kernel_width[i], inputs, hiddencenters[i]))
             hiddenresults[:,i] = self.guass_function(gaussian_kernel_width[i],inputs,hiddencenters[i])
+            # print(hiddenresults[:,i])
             # print(hiddencenters[i])
         return hiddenresults
 
