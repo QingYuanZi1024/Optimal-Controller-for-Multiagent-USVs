@@ -24,9 +24,16 @@ class RBFN(object):
         self.linearweights = 0
         self.finaloutputs = 0
         self.gaussian_kernel_width = np.random.random((self.hiddencenters, 1))  # 待修改
-        self.hiddencenters = np.random.random((self.hidden_nums, self.feature_nums))  # 待修改
+        # self.gaussian_kernel_width =np.zeros((72,1))
+        # self.gaussian_kernel_width.fill(0.8)
+        # print(self.gaussian_kernel_width)
+        self.hiddencenters = np.random.random((self.hidden_nums, self.feature_nums)) # 待修改
+        self.hiddencenters = 14.4 * self.hiddencenters - 7.2
         # print(self.hiddencenters.shape)
         self.linearweights = np.random.random((self.hidden_nums + 1, self.output_nums))
+        # self.linearweights = np.zeros((self.hidden_nums + 1, self.output_nums))
+        # self.linearweights.fill(0.3)
+        # self.linearweights = np.zeros((self.hidden_nums + 1, self.output_nums))
 
 # def init(self):
 #         gaussian_kernel_width = np.random.random((self.hiddencenters, 1)) # 待修改
@@ -179,7 +186,8 @@ class Critic2_NN(RBFN):
         # print((reg_1 + reg_2 + reg_3 +reg_4).shape)
         reg_5 = (reg_1 + reg_2 + reg_3 +reg_4)
         # print((-eta_c_2 / (1 + np.linalg.norm(self.varpi_sub)) * self.varpi_sub).shape)
-        reg_6 = (-eta_c_2 / (1 + np.linalg.norm(self.varpi_sub)) * self.varpi_sub)
+        # print(self.varpi_sub.shape)
+        reg_6 = (-eta_c_2 / (1 + np.linalg.norm(self.varpi_sub)**2) * self.varpi_sub)
         # print(reg_6.shape)
         # self.linearweights += (-eta_c_2 / (1 + np.linalg.norm(self.varpi_sub)) * self.varpi_sub) * reg_5
         self.linearweights += np.dot(reg_6,reg_5)
@@ -192,12 +200,13 @@ class Actor2_NN(RBFN):
         self.linearweights_last = 0
 
     def backward(self, certain_model, critic_2_nn, a_hat_dot):
-        # print(certain_model.function_V.shape)
-        # print(certain_model.z_2.shape)
-        # print(critic_2_nn.finaloutputs.shape)
-        # print(a_hat_dot.shape)
+        # print(certain_model.function_V)
+        # print(certain_model.z_2)
+        # print(critic_2_nn.finaloutputs)
+        # print(a_hat_dot)
         self.varpi_sub = np.dot(-self.hiddenoutputs_expand.T, (certain_model.function_V - zeta_2 * certain_model.z_2
                                                                - 1 / 2 * critic_2_nn.finaloutputs.T - a_hat_dot).T)
+        # print(self.varpi_sub)
         # print(self.hiddenoutputs_expand.shape)
         # print(self.varpi_sub.shape)
         # 将self.varpi_sub转为（73，1）的数组，可以参考critic_2_a 下一步要做 4.14号
@@ -210,7 +219,7 @@ class Actor2_NN(RBFN):
         reg_4 = np.dot(self.hiddenoutputs_expand.T, np.dot(self.hiddenoutputs_expand, self.linearweights_last))
         # print(self.hiddenoutputs_expand.shape)
         # print(reg_4.shape)
-        reg_5 = np.dot((eta_c_2 / (4 * (1 + np.linalg.norm(self.varpi_sub.T)))), reg_4.T)
+        reg_5 = np.dot((eta_c_2 / (4 * (1 + np.linalg.norm(self.varpi_sub)**2))), reg_4.T)
         # print(reg_5.shape)
         reg_6 = np.dot(self.varpi_sub.T, critic_2_nn.linearweights_last)
         reg_7 = np.dot(reg_5.T, reg_6.T)
@@ -219,3 +228,4 @@ class Actor2_NN(RBFN):
                                    np.dot(self.hiddenoutputs_expand, self.linearweights_last)))
         # print(reg_3.shape)
         self.linearweights += (reg_1 + reg_7 + reg_3)
+        # print(self.linearweights)

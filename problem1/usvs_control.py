@@ -9,7 +9,7 @@ center_numbers = 72
 
 Timeoftheworld = 0
 
-SimulationLimits = 200
+SimulationLimits = 1500
 
 
 
@@ -46,7 +46,11 @@ def change_state(Timeoftheworld):
 
     for i in range(NumberofHunters):
         # 改变每个智能体的状态
-        allhunters[i].change_position(allhunters[i].u_hat[0], allhunters[i].u_hat[1])
+        # print(allhunters[i].u_hat)
+        # print(allhunters[i].u_hat[0])
+        # print(allhunters[i].u_hat[1])
+        # print(allhunters[i].u_hat.shape)
+        allhunters[i].change_position(allhunters[i].u_hat[0], allhunters[i].u_hat[2])
         # 计算智能体与目标的距离和角度
         allhunters[i].get_distance_and_angle(agent_invader[0].pos_x, agent_invader[0].pos_y)
 
