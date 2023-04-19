@@ -121,9 +121,9 @@ class Hunter(agent_def.Agent):
     def calculate_virtual_opitmal(self, actor_1_nn_outputs):
         self.optimal_V_hat_last = self.optimal_V_hat
         # print(self.lambda_1.T)
-        # print(self.z_1)
-        # print(actor_1_nn_outputs)
-        # print(self.z_1 - 1 / 2 * actor_1_nn_outputs)
+        # print(self.z_1.shape)
+        # print(actor_1_nn_outputs.shape)
+        # print((self.z_1 - 1 / 2 * actor_1_nn_outputs).shape)
         self.optimal_V_hat = np.dot(np.array([np.dot(np.linalg.inv(R_rewardweights) , self.lambda_1.T)]).T, np.dot(
                     -adp_drl_nn.zeta_1 , self.z_1 - 1 / 2 * actor_1_nn_outputs))
         # print(self.optimal_V_hat)

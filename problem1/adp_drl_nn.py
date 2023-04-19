@@ -12,10 +12,10 @@ zeta_2 = 1.4
 
 class RBFN(object):
 
-    def __init__(self, feature_nums,hidden_nums, output_nums): #还有一些超参数可能需要初始化
+    def __init__(self, feature_nums, hidden_nums, output_nums): #还有一些超参数可能需要初始化
+        self.feature_nums = feature_nums
         self.hidden_nums = hidden_nums
         self.output_nums = output_nums
-        self.feature_nums = feature_nums
         self.sample_nums = 0
         self.gaussian_kernel_width = 0  # 高斯核宽度
         # self.hiddencenters = 72
@@ -24,7 +24,7 @@ class RBFN(object):
         self.linearweights = 0
         self.finaloutputs = 0
         # self.gaussian_kernel_width = np.random.random((72, 1))  # 待修改
-        self.gaussian_kernel_width = np.linspace(-1, 1, num=72).reshape(72, 1)
+        self.gaussian_kernel_width = np.linspace(-1, 1, num = 72).reshape(72, 1)
         self.hiddencenters = np.linspace(-7.2, 7.2, num=72).reshape(72, 1)
         # self.gaussian_kernel_width =np.zeros((72,1))
         # self.gaussian_kernel_width.fill(0.8)
@@ -32,9 +32,11 @@ class RBFN(object):
         # if self.feature_nums == 1:
         #     self.hiddencenters = np.linspace(-7.2, 7.2, num=72).reshape(72, self.feature_nums)
         # if self.feature_nums == 3:
-        #     self.hiddencenters = np.linspace(-7.2, 7.2, num=72).reshape(72, self.feature_nums)
-        #     self.hiddencenters = np.concatenate(self.hiddencenters,np.linspace(-7.2, 7.2, num=72).reshape(72, self.feature_nums))
-        #     self.hiddencenters = np.concatenate(self.hiddencenters,np.linspace(-7.2, 7.2, num=72).reshape(72, self.feature_nums))
+        #     self.hiddencenters = np.linspace(-7.2, 7.2, num=72).reshape(72, 1)
+        #     self.hiddencenters = np.concatenate(self.hiddencenters,np.linspace(-7.2, 7.2, num=72).reshape(72, 1))
+        #     self.hiddencenters = np.concatenate(self.hiddencenters,np.linspace(-7.2, 7.2, num=72).reshape(72, 1))
+        # else:
+        #     print('error')
         # # self.hiddencenters = np.random.random((self.hidden_nums, self.feature_nums)) # 待修改
         # self.hiddencenters = 14.4 * self.hiddencenters - 7.2
         # print(self.hiddencenters.shape)
@@ -68,6 +70,7 @@ class RBFN(object):
         # print(self.linearweights)
         # print(self.hiddenoutputs_expand)
         self.finaloutputs = np.dot(self.hiddenoutputs_expand, self.linearweights)
+        # print(self.finaloutputs.shape)
         # print(self.finaloutputs)
 
     def guass_function(self, gaussian_kernel_width, inputs, hiddencenters_i):
@@ -93,8 +96,8 @@ class RBFN(object):
 
 class Critic1_NN(RBFN):
 
-    def __init__(self, hidden_nums, output_nums):
-        super().__init__(hidden_nums, output_nums)
+    def __init__(self, feature_nums, hidden_nums, output_nums):
+        super().__init__(feature_nums, hidden_nums, output_nums)
         self.varpi_super = 0
         self.linearweights_last = 0
 
@@ -128,8 +131,8 @@ class Critic1_NN(RBFN):
 
 class Actor1_NN(RBFN):
 
-    def __init__(self, hidden_nums, output_nums):
-        super().__init__(hidden_nums, output_nums)
+    def __init__(self, feature_nums, hidden_nums, output_nums):
+        super().__init__(feature_nums, hidden_nums, output_nums)
         self.varpi_super = 0
         self.linearweights_last = 0
 
@@ -160,8 +163,8 @@ class Actor1_NN(RBFN):
 
 class Critic2_NN(RBFN):
 
-    def __init__(self, hidden_nums, output_nums):
-        super().__init__(hidden_nums, output_nums)
+    def __init__(self, feature_nums, hidden_nums, output_nums):
+        super().__init__(feature_nums, hidden_nums, output_nums)
         self.varpi_sub = 0
         self.linearweights_last = 0
 
@@ -202,8 +205,8 @@ class Critic2_NN(RBFN):
 
 class Actor2_NN(RBFN):
 
-    def __init__(self, hidden_nums, output_nums):
-        super().__init__(hidden_nums, output_nums)
+    def __init__(self, feature_nums, hidden_nums, output_nums):
+        super().__init__(feature_nums, hidden_nums, output_nums)
         self.varpi_sub = 0
         self.linearweights_last = 0
 
