@@ -26,6 +26,7 @@ class Agent(object):
 
     def get_distance_and_angle(self, target_x, target_y):
         self.distance = np.sqrt((target_x - self.pos_x) * (target_x - self.pos_x) + (target_y - self.pos_y) * (target_y - self.pos_y))
+        # print(self.distance)
         self.angle = atan2(self.pos_y - target_y, self.pos_x - target_x)
         self.Q_transform = np.array(([cos(self.angle), -sin(self.angle)], [sin(self.angle), cos(self.angle)]))
 
@@ -54,17 +55,67 @@ class Agent(object):
                     elif 0 < angle_diff <= pi + self.angle:
                         self.back_neighbors_sets_1[agent.id] = angle_diff
         if self.angle >= 0:
-            if self.front_neighbors_sets_1 == {}:
-                self.front_neighbor = get_abs_max_key(self.front_neighbors_sets_2)
+            if self.back_neighbors_sets == {}:
+                if self.front_neighbors_sets_2 != {}:
+                    self.back_neighbor = get_abs_min_key(self.front_neighbors_sets_2)
+                else:
+                    self.back_neighbor = get_abs_max_key(self.front_neighbors_sets_1)
+                if self.front_neighbors_sets_1 == {}:
+                    self.front_neighbor = get_abs_max_key(self.front_neighbors_sets_2)
+                else:
+                    self.front_neighbor = get_abs_min_key(self.front_neighbors_sets_1)
+            elif self.front_neighbors_sets_1 == {} and self.front_neighbors_sets_2 == {}:
+                self.front_neighbor = get_abs_max_key(self.back_neighbors_sets)
+                self.back_neighbor = get_abs_min_key(self.back_neighbors_sets)
+            # 前后邻居集合都存在的情况下
             else:
-                self.front_neighbor = get_abs_min_key(self.front_neighbors_sets_1)
-            self.back_neighbor = get_abs_min_key(self.back_neighbors_sets)
-        elif  self.angle < 0:
-            if self.back_neighbors_sets_1 == {}:
-                self.back_neighbor = get_abs_max_key(self.back_neighbors_sets_2)
+                if self.front_neighbors_sets_1 == {}:
+                    self.front_neighbor = get_abs_max_key(self.front_neighbors_sets_2)
+                else:
+                    self.front_neighbor = get_abs_min_key(self.front_neighbors_sets_1)
+                self.back_neighbor = get_abs_min_key(self.back_neighbors_sets)
+            # 前后邻居集合缺失的情况
+            # if self.back_neighbor == {}:
+                # if self.front_neighbors_sets_2 != {}:
+                    # self.back_neighbor = get_abs_min_key(self.front_neighbors_sets_2)
+                # else:
+                    # self.back_neighbor = get_abs_max_key(self.front_neighbors_sets_1)
+            # elif self.front_neighbor == {}:
+                # self.front_neighbor = get_abs_max_key(self.back_neighbors_sets)
+
+        elif self.angle < 0:
+            # 前后邻居聚合缺失的情况下
+            if self.front_neighbors_sets == {}:
+                if self.back_neighbors_sets_2 != {}:
+                    self.front_neighbor = get_abs_min_key(self.back_neighbors_sets_2)
+                else:
+                    self.front_neighbor = get_abs_max_key(self.back_neighbors_sets_1)
+                if self.back_neighbors_sets_1 == {}:
+                    self.back_neighbor = get_abs_max_key(self.back_neighbors_sets_2)
+                else:
+                    self.back_neighbor = get_abs_min_key(self.back_neighbors_sets_1)
+            elif self.back_neighbors_sets_1 == {} and self.back_neighbors_sets_2 == {}:
+                self.back_neighbor = get_abs_max_key(self.front_neighbors_sets)
+                self.front_neighbor = get_abs_min_key(self.front_neighbors_sets)
+            # 前后邻居集合都存在的情况下
             else:
-                self.back_neighbor = get_abs_min_key(self.back_neighbors_sets_1)
-            self.front_neighbor = get_abs_min_key(self.front_neighbors_sets)
+                if self.back_neighbors_sets_1 == {}:
+                    self.back_neighbor = get_abs_max_key(self.back_neighbors_sets_2)
+                else:
+                    self.back_neighbor = get_abs_min_key(self.back_neighbors_sets_1)
+                self.front_neighbor = get_abs_min_key(self.front_neighbors_sets)
+        self.middle_neighbor = self.front_neighbor
+        self.front_neighbor = self.back_neighbor
+        self.back_neighbor = self.middle_neighbor
+            # 前后邻居聚合缺失的情况下
+            # if self.front_neighbor == {}:
+                # if self.back_neighbors_sets_2 != {}:
+                    # self.front_neighbor = get_abs_min_key(self.back_neighbors_sets_2)
+                # else:
+                    # self.front_neighbor = get_abs_max_key(self.back_neighbors_sets_1)
+            # elif self.back_neighbor == {}:
+                # self.back_neighbor = get_abs_max_key(self.front_neighbors_sets)
+
 
         return self.front_neighbor,self.back_neighbor
 
@@ -74,7 +125,6 @@ if __name__ == "__main__":
     agents.append(Agent(1, 5, 1))
     agents.append(Agent(2, 2, 8))
     agents.append(Agent(3, 4, 2))
-
     for agent_i in agents:
         agent_i.get_distance_and_angle(0, 0)
     for agent_i in agents:

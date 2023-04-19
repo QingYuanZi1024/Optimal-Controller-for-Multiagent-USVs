@@ -1,6 +1,7 @@
 import numpy as np
 from math import pi, atan2, sin, cos
 
+
 import agent_def
 import adp_drl_nn
 
@@ -27,7 +28,7 @@ class Hunter(agent_def.Agent):
         self.speed_r = speed_r
         self.vector_V = np.array([[self.speed_u, self.speed_v, self.speed_r]]).T
         self.a = 0
-        self.u_hat = [0, 0]
+        self.u_hat = [0, 0, 0]
         self.optimal_V_hat = 0
         self.optimal_V_hat_last = 0
         self.optimal_V_hat_dot = 0
@@ -38,8 +39,8 @@ class Hunter(agent_def.Agent):
         v_next = ((-D_22 * self.speed_v - M_11 * self.speed_u * self.speed_r) / M_22)* T_changeState
         # print(v_next)
         r_next = ((tau_2 - D_33 * self.speed_r - (M_22 - M_11) * self.speed_u * self.speed_v) / M_33) * T_changeState
-        # print(type(tau_1))
-        # print(type(tau_2))
+        # print(tau_1)
+        # print(tau_2)
         # print(tau_1)
         # print(tau_2)
         # 运动学模型 （1）
@@ -62,11 +63,14 @@ class Hunter(agent_def.Agent):
                                    [(-D_33 * self.speed_r - (M_22 - M_11) * self.speed_u * self.speed_v) / M_33]]).reshape(3,1)
 
     def calculate_super_error(self, angle_front, angle_behind, rho_front, rho_behind, u_front, u_behind, v_front, v_behind, v_target_x, v_target_y):
-        # print(self.distance)
+
+        print(self.distance)
         # print(self.angle)
         # print(self.orientation)
         self.z_1 = 0.02 * np.array([[(self.distance - rho_0) ** 2 + (2 * self.angle - angle_front - angle_behind) ** 2 + (self.orientation + pi / 2 - self.angle)]]).reshape(1,1)
-        print(self.z_1)
+        # print(self.z_1)
+        # print(2 * self.angle - angle_front - angle_behind)
+        # print(self.orientation + pi / 2 - self.angle)
         # print(self.z_1.shape)
 
         self.alpha_1 = 0.02 * (self.distance - rho_0) * (np.array([[cos(self.angle), sin(self.angle)]]))
@@ -140,6 +144,7 @@ class Hunter(agent_def.Agent):
     def calculate_actual_opitmal(self, actor_2_nn_outputs):
         # print(actor_2_nn_outputs)
         # print(self.z_2)
+        # self.u_hat = [0, 0, 0]
         self.u_hat = -adp_drl_nn.zeta_2 * self.z_2 - 1 / 2 * actor_2_nn_outputs.T
         # print(self.u_hat)
         for i in range(3):
@@ -147,6 +152,8 @@ class Hunter(agent_def.Agent):
                 self.u_hat[i] = 20
             if self.u_hat[i] < -20 :
                 self.u_hat[i] = -20
+            if self.u_hat[i] == np.nan:
+                self.u_hat = 0
         # print(self.u_hat)
 
 

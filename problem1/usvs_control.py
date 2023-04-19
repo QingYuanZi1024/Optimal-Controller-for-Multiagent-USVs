@@ -1,8 +1,7 @@
 import numpy as np
 import model_def
-import agent_def
 import adp_drl_nn
-from math import atan,sin,cos,pi
+from math import atan
 
 NumberofHunters = 3
 
@@ -10,7 +9,7 @@ center_numbers = 72
 
 Timeoftheworld = 0
 
-SimulationLimits = 1000000
+SimulationLimits = 15000
 
 
 
@@ -27,9 +26,8 @@ z_1_set = [None, None, None]
 z_2_set = [None, None, None]
 
 def create_world():
-
     allhunters[0] = model_def.Hunter(0, 1, 7, atan(4), 0, 0, 0)
-    allhunters[1] = model_def.Hunter(1, 5, 1, atan(1 / 4), 0, 0, 0)
+    allhunters[1] = model_def.Hunter(1, 5, 1, atan(1/4), 0, 0, 0)
     allhunters[2] = model_def.Hunter(2, 2, 8, atan(1 / 3), 0, 0, 0)
 
     agent_invader[0] = model_def.Invader(0, 8, 6, atan(1.0 / 5))
@@ -39,20 +37,24 @@ def create_world():
         z_1_set[i] = []
         z_2_set[i] = []
 
-        all_critic_1[i] = adp_drl_nn.Critic1_NN(center_numbers, 1)
-        all_actor_1[i] = adp_drl_nn.Actor1_NN(center_numbers, 1)
-        all_critic_2[i] = adp_drl_nn.Critic2_NN(center_numbers, 2)
-        all_actor_2[i] = adp_drl_nn.Actor2_NN(center_numbers, 2)
+        all_critic_1[i] = adp_drl_nn.Critic1_NN(center_numbers,1)
+        all_actor_1[i] = adp_drl_nn.Actor1_NN(center_numbers,1)
+        all_critic_2[i] = adp_drl_nn.Critic2_NN(center_numbers,3)
+        all_actor_2[i] = adp_drl_nn.Actor2_NN(center_numbers,3)
 
 def change_state(Timeoftheworld):
 
     for i in range(NumberofHunters):
         # 改变每个智能体的状态
-        allhunters[i].change_position(allhunters[i].u_hat[0], allhunters[i].u_hat[1])
+        # print(allhunters[i].u_hat)
+        # print(allhunters[i].u_hat[0])
+        # print(allhunters[i].u_hat[1])
+        # print(allhunters[i].u_hat.shape)
+        allhunters[i].change_position(allhunters[i].u_hat[0], allhunters[i].u_hat[2])
         # 计算智能体与目标的距离和角度
         allhunters[i].get_distance_and_angle(agent_invader[0].pos_x, agent_invader[0].pos_y)
 
-    agent_invader[0].change_speed(0.2, 0.1)
+    agent_invader[0].change_speed(0, 0)
     agent_invader[0].change_position()
 
 def change_network(Timeoftheworld):
@@ -82,14 +84,17 @@ def change_network(Timeoftheworld):
 
         # 计算z_2
         allhunters[i].calculate_sub_error()
+        # print(allhunters[i].z_2)
 
         # RBF网络得到近似值 Step2
         z_2_set[i].append(np.linalg.norm(allhunters[i].z_2))
 
         all_critic_2[i].forward(allhunters[i].z_2)
         all_actor_2[i].forward(allhunters[i].z_2)
+        # print(all_actor_2[i].finaloutputs.T)
 
         allhunters[i].calculate_actual_opitmal(all_actor_2[i].finaloutputs)
+        # print(allhunters[i].u_hat)
 
         all_critic_2[i].backward(allhunters[i], all_actor_2[i], allhunters[i].optimal_V_hat_dot)
         all_actor_2[i].backward(allhunters[i], all_critic_2[i], allhunters[i].optimal_V_hat_dot)
@@ -98,7 +103,7 @@ def train_world():
 
     numbercount = 0
 
-    for i in range(SimulationLimits):
+    for j in range(SimulationLimits):
 
         global Timeoftheworld
 
