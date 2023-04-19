@@ -37,10 +37,10 @@ def create_world():
         z_1_set[i] = []
         z_2_set[i] = []
 
-        all_critic_1[i] = adp_drl_nn.Critic1_NN(center_numbers,1)
-        all_actor_1[i] = adp_drl_nn.Actor1_NN(center_numbers,1)
-        all_critic_2[i] = adp_drl_nn.Critic2_NN(center_numbers,3)
-        all_actor_2[i] = adp_drl_nn.Actor2_NN(center_numbers,3)
+        all_critic_1[i] = adp_drl_nn.Critic1_NN(1,center_numbers, 1)
+        all_actor_1[i] = adp_drl_nn.Actor1_NN(1,center_numbers, 1)
+        all_critic_2[i] = adp_drl_nn.Critic2_NN(3,center_numbers, 3)
+        all_actor_2[i] = adp_drl_nn.Actor2_NN(3,center_numbers, 3)
 
 def change_state(Timeoftheworld):
 

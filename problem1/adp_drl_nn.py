@@ -12,7 +12,7 @@ zeta_2 = 1.4
 
 class RBFN(object):
 
-    def __init__(self, feature_nums, hidden_nums, output_nums): #还有一些超参数可能需要初始化
+    def __init__(self, feature_nums,hidden_nums, output_nums): #还有一些超参数可能需要初始化
         self.hidden_nums = hidden_nums
         self.output_nums = output_nums
         self.feature_nums = feature_nums
@@ -24,12 +24,18 @@ class RBFN(object):
         self.linearweights = 0
         self.finaloutputs = 0
         # self.gaussian_kernel_width = np.random.random((72, 1))  # 待修改
-        self.gaussian_kernel_width = np.linspace(-1,1,num=72).reshape(72,1)
+        self.gaussian_kernel_width = np.linspace(-1, 1, num=72).reshape(72, 1)
+        self.hiddencenters = np.linspace(-7.2, 7.2, num=72).reshape(72, 1)
         # self.gaussian_kernel_width =np.zeros((72,1))
         # self.gaussian_kernel_width.fill(0.8)
         # print(self.gaussian_kernel_width)
-        self.hiddencenters = np.linspace(-7.2, 7.2, num=72).reshape(72, self.feature_nums)
-        # self.hiddencenters = np.random.random((self.hidden_nums, self.feature_nums)) # 待修改
+        # if self.feature_nums == 1:
+        #     self.hiddencenters = np.linspace(-7.2, 7.2, num=72).reshape(72, self.feature_nums)
+        # if self.feature_nums == 3:
+        #     self.hiddencenters = np.linspace(-7.2, 7.2, num=72).reshape(72, self.feature_nums)
+        #     self.hiddencenters = np.concatenate(self.hiddencenters,np.linspace(-7.2, 7.2, num=72).reshape(72, self.feature_nums))
+        #     self.hiddencenters = np.concatenate(self.hiddencenters,np.linspace(-7.2, 7.2, num=72).reshape(72, self.feature_nums))
+        # # self.hiddencenters = np.random.random((self.hidden_nums, self.feature_nums)) # 待修改
         # self.hiddencenters = 14.4 * self.hiddencenters - 7.2
         # print(self.hiddencenters.shape)
         self.linearweights = np.random.random((self.hidden_nums + 1, self.output_nums))
