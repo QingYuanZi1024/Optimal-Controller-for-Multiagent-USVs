@@ -63,7 +63,6 @@ class Hunter(agent_def.Agent):
                                    [(-D_33 * self.speed_r - (M_22 - M_11) * self.speed_u * self.speed_v) / M_33]]).reshape(3,1)
 
     def calculate_super_error(self, angle_front, angle_behind, rho_front, rho_behind, u_front, u_behind, v_front, v_behind, v_target_x, v_target_y):
-
         print(self.distance)
         # print(self.angle)
         # print(self.orientation)
@@ -148,10 +147,10 @@ class Hunter(agent_def.Agent):
         self.u_hat = -adp_drl_nn.zeta_2 * self.z_2 - 1 / 2 * actor_2_nn_outputs.T
         # print(self.u_hat)
         for i in range(3):
-            if self.u_hat[i] > 20 :
-                self.u_hat[i] = 20
-            if self.u_hat[i] < -20 :
-                self.u_hat[i] = -20
+            if self.u_hat[i] > 10 :
+                self.u_hat[i] = 10
+            if self.u_hat[i] < -10 :
+                self.u_hat[i] = -10
             if self.u_hat[i] == np.nan:
                 self.u_hat = 0
         # print(self.u_hat)

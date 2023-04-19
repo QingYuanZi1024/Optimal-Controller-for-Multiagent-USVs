@@ -9,7 +9,7 @@ center_numbers = 72
 
 Timeoftheworld = 0
 
-SimulationLimits = 15000
+SimulationLimits = 1500
 
 
 
@@ -54,7 +54,7 @@ def change_state(Timeoftheworld):
         # 计算智能体与目标的距离和角度
         allhunters[i].get_distance_and_angle(agent_invader[0].pos_x, agent_invader[0].pos_y)
 
-    agent_invader[0].change_speed(0, 0)
+    agent_invader[0].change_speed(0.2, 0.1)
     agent_invader[0].change_position()
 
 def change_network(Timeoftheworld):
@@ -103,7 +103,7 @@ def train_world():
 
     numbercount = 0
 
-    for j in range(SimulationLimits):
+    for i in range(SimulationLimits):
 
         global Timeoftheworld
 
