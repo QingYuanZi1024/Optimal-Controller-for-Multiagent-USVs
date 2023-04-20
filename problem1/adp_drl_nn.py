@@ -12,23 +12,33 @@ zeta_2 = 1.4
 
 class RBFN(object):
 
-    def __init__(self, feature_nums, hidden_nums, output_nums): #还有一些超参数可能需要初始化
+    def __init__(self,feature_nums,hidden_nums, output_nums): #还有一些超参数可能需要初始化
         self.hidden_nums = hidden_nums
         self.output_nums = output_nums
         self.feature_nums = feature_nums
-        self.sample_nums = 0
+        # self.sample_nums = 0
         self.gaussian_kernel_width = 0  # 高斯核宽度
         # self.hiddencenters = 72
         self.hiddenoutputs = 0
         self.hiddenoutputs_expand = 0
         self.linearweights = 0
         self.finaloutputs = 0
-        # self.gaussian_kernel_width = np.random.random((72, 1))  # 待修改
-        self.gaussian_kernel_width = np.linspace(-1,1,num=72).reshape(72,1)
+        self.gaussian_kernel_width = np.random.random((72, 1))  # 待修改
+        # print(self.gaussian_kernel_width)
+        # self.gaussian_kernel_width = np.linspace(-1,1,num=72).reshape(72,1)
         # self.gaussian_kernel_width =np.zeros((72,1))
         # self.gaussian_kernel_width.fill(0.8)
         # print(self.gaussian_kernel_width)
-        self.hiddencenters = np.linspace(-7.2, 7.2, num=72).reshape(72, self.feature_nums)
+        # self.hiddencenters = np.linspace(-7.2, 7.2, num=72).reshape(72, 1)
+        if self.feature_nums == 1:
+            self.hiddencenters = np.linspace(-7.2, 7.2, num=72).reshape(1,72)
+        if self.feature_nums == 3:
+            self.hiddencenters = np.linspace(-7.2, 7.2, num=72)
+            self.hiddencenters = np.append(self.hiddencenters, np.linspace(-7.2, 7.2, num=72), axis=0).reshape(2, 72)
+            self.hiddencenters = np.append(self.hiddencenters, np.linspace(-7.2, 7.2, num=72)).reshape(3, 72)
+        # print(self.hiddencenters)
+        # print(self.hiddencenters.shape)
+        # print(self.hiddencenters)
         # self.hiddencenters = np.random.random((self.hidden_nums, self.feature_nums)) # 待修改
         # self.hiddencenters = 14.4 * self.hiddencenters - 7.2
         # print(self.hiddencenters.shape)
@@ -52,34 +62,41 @@ class RBFN(object):
     def forward(self, inputs):
         # print(inputs.shape)
         inputs = inputs.T
-        # self.sample_nums, self.feature_nums = inputs.shape
+        self.sample_nums, self.feature_nums = inputs.shape
         # print(self.sample_nums)
         # print(self.feature_nums)
         # self.gaussian_kernel_width, self.hiddencenters, self.linearweights = self.init()
         self.hiddenoutputs = self.guass_change(self.gaussian_kernel_width, inputs, self.hiddencenters)
-        # print(self.hiddenoutputs)
+        # print(self.hiddenoutputs.shape)
         self.hiddenoutputs_expand = self.add_intercept(self.hiddenoutputs)
-        # print(self.linearweights)
-        # print(self.hiddenoutputs_expand)
+        # print(self.hiddenoutputs_expand.shape)
+        # print(self.linearweights.shape)
         self.finaloutputs = np.dot(self.hiddenoutputs_expand, self.linearweights)
         # print(self.finaloutputs)
 
     def guass_function(self, gaussian_kernel_width, inputs, hiddencenters_i):
         # print(inputs)
         # print(hiddencenters_i)
-        # print(gaussian_kernel_width.shape)
+        # print(gaussian_kernel_width)
         # print(np.linalg.norm((inputs-hiddencenters_i)))
         # print(np.exp(-np.linalg.norm((inputs-hiddencenters_i), axis=1)**2/(2*gaussian_kernel_width**2)))
         return np.exp(-np.linalg.norm((inputs-hiddencenters_i), axis=1)**2/(2*gaussian_kernel_width**2))
 
     def guass_change(self, gaussian_kernel_width, inputs, hiddencenters):
-        hiddenresults = np.zeros((self.sample_nums, len(hiddencenters)))
+        # hiddenresults = np.zeros((self.sample_nums, len(hiddencenters)))
+        hiddenresults = np.zeros((self.sample_nums, 72))
         # print(hiddenresults.shape)
-        for i in range(len(hiddencenters)):
+        # for i in range(len(hiddencenters)):
+        for i in range(72):
             # print(self.guass_function(gaussian_kernel_width[i], inputs, hiddencenters[i]))
-            hiddenresults[:,i] = self.guass_function(gaussian_kernel_width[i],inputs,hiddencenters[i])
+            # print(gaussian_kernel_width[i])
+            # print(hiddencenters[:,i])
+            # print(inputs)
+            hiddenresults[:,i] = self.guass_function(gaussian_kernel_width[i],inputs,hiddencenters[:,i])
+            # print(hiddenresults)
             # print(hiddenresults[:,i])
-            # print(hiddencenters[i])
+            # print(hiddencenters[:i].shape)
+            # print(hiddenresults.shape)
         return hiddenresults
 
     def add_intercept(self, hiddenoutputs):
@@ -87,8 +104,8 @@ class RBFN(object):
 
 class Critic1_NN(RBFN):
 
-    def __init__(self, hidden_nums, output_nums):
-        super().__init__(hidden_nums, output_nums)
+    def __init__(self, feature_nums,hidden_nums, output_nums):
+        super().__init__(feature_nums,hidden_nums, output_nums)
         self.varpi_super = 0
         self.linearweights_last = 0
 
@@ -122,8 +139,8 @@ class Critic1_NN(RBFN):
 
 class Actor1_NN(RBFN):
 
-    def __init__(self, hidden_nums, output_nums):
-        super().__init__(hidden_nums, output_nums)
+    def __init__(self, feature_nums,hidden_nums, output_nums):
+        super().__init__(feature_nums,hidden_nums, output_nums)
         self.varpi_super = 0
         self.linearweights_last = 0
 
@@ -154,8 +171,8 @@ class Actor1_NN(RBFN):
 
 class Critic2_NN(RBFN):
 
-    def __init__(self, hidden_nums, output_nums):
-        super().__init__(hidden_nums, output_nums)
+    def __init__(self,feature_nums, hidden_nums, output_nums):
+        super().__init__(feature_nums,hidden_nums, output_nums)
         self.varpi_sub = 0
         self.linearweights_last = 0
 
@@ -196,8 +213,8 @@ class Critic2_NN(RBFN):
 
 class Actor2_NN(RBFN):
 
-    def __init__(self, hidden_nums, output_nums):
-        super().__init__(hidden_nums, output_nums)
+    def __init__(self,feature_nums, hidden_nums, output_nums):
+        super().__init__(feature_nums,hidden_nums, output_nums)
         self.varpi_sub = 0
         self.linearweights_last = 0
 

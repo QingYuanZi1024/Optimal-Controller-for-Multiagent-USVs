@@ -9,7 +9,7 @@ center_numbers = 72
 
 Timeoftheworld = 0
 
-SimulationLimits = 1500
+SimulationLimits = 200000
 
 
 
@@ -37,10 +37,10 @@ def create_world():
         z_1_set[i] = []
         z_2_set[i] = []
 
-        all_critic_1[i] = adp_drl_nn.Critic1_NN(center_numbers,1)
-        all_actor_1[i] = adp_drl_nn.Actor1_NN(center_numbers,1)
-        all_critic_2[i] = adp_drl_nn.Critic2_NN(center_numbers,3)
-        all_actor_2[i] = adp_drl_nn.Actor2_NN(center_numbers,3)
+        all_critic_1[i] = adp_drl_nn.Critic1_NN(1,center_numbers,1)
+        all_actor_1[i] = adp_drl_nn.Actor1_NN(1,center_numbers,1)
+        all_critic_2[i] = adp_drl_nn.Critic2_NN(3,center_numbers,3)
+        all_actor_2[i] = adp_drl_nn.Actor2_NN(3,center_numbers,3)
 
 def change_state(Timeoftheworld):
 
@@ -54,7 +54,7 @@ def change_state(Timeoftheworld):
         # 计算智能体与目标的距离和角度
         allhunters[i].get_distance_and_angle(agent_invader[0].pos_x, agent_invader[0].pos_y)
 
-    agent_invader[0].change_speed(0.2, 0.1)
+    agent_invader[0].change_speed(0, 0)
     agent_invader[0].change_position()
 
 def change_network(Timeoftheworld):

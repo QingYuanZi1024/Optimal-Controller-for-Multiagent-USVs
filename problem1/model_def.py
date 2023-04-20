@@ -63,11 +63,14 @@ class Hunter(agent_def.Agent):
                                    [(-D_33 * self.speed_r - (M_22 - M_11) * self.speed_u * self.speed_v) / M_33]]).reshape(3,1)
 
     def calculate_super_error(self, angle_front, angle_behind, rho_front, rho_behind, u_front, u_behind, v_front, v_behind, v_target_x, v_target_y):
-        print(self.distance)
+        # print(self.distance)
         # print(self.angle)
         # print(self.orientation)
         self.z_1 = 0.02 * np.array([[(self.distance - rho_0) ** 2 + (2 * self.angle - angle_front - angle_behind) ** 2 + (self.orientation + pi / 2 - self.angle)]]).reshape(1,1)
-        # print(self.z_1)
+        if self.id == 2:
+            print(2 * self.angle - angle_front - angle_behind)
+            # print(self.distance - rho_0)
+            # print(self.orientation + pi / 2 - self.angle)
         # print(2 * self.angle - angle_front - angle_behind)
         # print(self.orientation + pi / 2 - self.angle)
         # print(self.z_1.shape)
@@ -96,7 +99,7 @@ class Hunter(agent_def.Agent):
         self.delta = 0.02 * np.dot(np.dot(self.beta_2 , Q_transform_front) , np.array([[u_front, v_front]]).T) + np.dot(np.dot(self.beta_3 , Q_transform_behind) , np.array([[u_behind, v_behind]]).T)
         # print(self.delta.shape)
 
-        self.lambda_1 = np.append(np.dot((self.alpha_1 + self.beta_1 - self.gamma_1) , self.Q_transform),self.gamma_1)
+        self.lambda_1 = np.append(np.dot((self.alpha_1 + self.beta_1 - self.gamma_2) , self.Q_transform),self.gamma_1)
 
         # print(self.Q_transform)
         # print(self.Q_transform.shape)
@@ -147,10 +150,10 @@ class Hunter(agent_def.Agent):
         self.u_hat = -adp_drl_nn.zeta_2 * self.z_2 - 1 / 2 * actor_2_nn_outputs.T
         # print(self.u_hat)
         for i in range(3):
-            if self.u_hat[i] > 10 :
-                self.u_hat[i] = 10
-            if self.u_hat[i] < -10 :
-                self.u_hat[i] = -10
+            if self.u_hat[i] > 30 :
+                self.u_hat[i] = 30
+            if self.u_hat[i] < -30 :
+                self.u_hat[i] = -30
             if self.u_hat[i] == np.nan:
                 self.u_hat = 0
         # print(self.u_hat)
